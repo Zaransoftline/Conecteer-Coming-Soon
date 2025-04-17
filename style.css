@@ -90,11 +90,15 @@ body {
 }
 
 .header {
-  display: flex;
+  display: none;
   padding-inline: 4vw;
   justify-content: center;
   padding-block: 20px;
   align-items: center;
+}
+
+main {
+  display: none;
 }
 
 .header-content {

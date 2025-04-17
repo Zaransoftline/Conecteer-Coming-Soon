@@ -1,4 +1,7 @@
 const loader = document.getElementById("loader");
+const body = document.body;
+const header = document.querySelector('header');
+const main = document.querySelector('main');
 
 document.onreadystatechange = function () {
   if (this.readyState !== "complete") {
@@ -11,12 +14,13 @@ document.onreadystatechange = function () {
         loader.style.visibility = 'hidden';
         document.querySelector("body").style.visibility = "visible";
         document.querySelector("body").style.overflowY = "unset";
+        header.style.display = 'flex';
+        main.style.display = 'block';
     }, 2000)
   }
 };
 
 const toggleButton = document.querySelector('.mode-input');
-const body = document.body;
 const mode = document.querySelector('.mode');
 const moon = document.querySelector('.moon');
 const sun = document.querySelector('.sun');
