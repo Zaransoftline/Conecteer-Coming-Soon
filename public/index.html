@@ -64,17 +64,27 @@
           e.preventDefault();
           const email = e.target.email.value;
 
-          const res = await fetch("../api/subscribe", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          });
-          const data = await res.json();
+          try {
+            const res = await fetch("/api/subscribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email }),
+            });
 
-          if (data.error) {
-            window.location.href = "/error.html"; // client-side redirect
-          } else {
-            window.location.href = "/subscribed.html"; // success page
+            if (!res.ok) {
+              const errorData = await res.json();
+              throw new Error(errorData.error || "Something went wrong!");
+            }
+
+            const data = await res.json();
+
+            if (data.error) {
+              window.location.href = "/error.html"; // client-side redirect
+            } else {
+              window.location.href = "/subscribed.html"; // success page
+            }
+          } catch (err) {
+            console.error("Error:", err);
           }
         });
     </script>
