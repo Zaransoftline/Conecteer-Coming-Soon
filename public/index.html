@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conecteer - Coming Soon!</title>
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+
+    <link rel="stylesheet" href="./style.css" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <aside class="loader" id="loader">
+      <div class="animation">
+        <div class="circle blue"></div>
+        <div class="circle purple"></div>
+        <div class="circle black"></div>
+        <div class="circle light-blue"></div>
+      </div>
+    </aside>
+
+    <header class="header">
+      <div class="header-content">
+        <a class="logo" href="#">
+          <img class="logo-img" src="./images/logo.svg" alt="Logo" />
+        </a>
+
+        <div class="mode">
+          <input type="checkbox" class="mode-input" />
+          <img class="moon" src="./images/moon.svg" alt="Moon Icon" />
+          <img class="sun" src="./images/sun.svg" alt="Sun Icon" />
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Coming Soon!</h1>
+        <p>Something great is on the way!</p>
+
+        <form method="POST" id="subscribe-form">
+          <label>
+            <span> Your email: </span>
+            <input class="email-input" type="email" name="email" required />
+          </label>
+          <!-- your other form fields go here -->
+          <button type="submit" class="submit-btn">Notify Me!</button>
+        </form>
+      </section>
+    </main>
+
+    <script src="./scripts/script.js"></script>
+    <script src="./scripts/theme.js"></script>
+
+    <script>
+      document
+        .getElementById("subscribe-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = e.target.email.value;
+
+          const res = await fetch("../api/subscribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const data = await res.json();
+
+          if (data.error) {
+            window.location.href = "/error.html"; // client-side redirect
+          } else {
+            window.location.href = "/subscribed.html"; // success page
+          }
+        });
+    </script>
+  </body>
+</html>
