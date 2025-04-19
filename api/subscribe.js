@@ -1,58 +1,69 @@
-import { MongoClient } from "mongodb";
-import nodemailer from "nodemailer";
+import { MongoClient } from 'mongodb';
+import nodemailer from 'nodemailer';
 
-const client = new MongoClient(process.env.MONGODB_URI);
-let db;
+let cachedDb = null;
 
+// Connect to MongoDB
+async function connectDb() {
+  if (cachedDb) {
+    return cachedDb; // Reuse cached DB connection
+  }
+
+  const client = new MongoClient(process.env.MONGODB_URI);
+  const db = await client.connect();
+  cachedDb = db.db('Conecteer'); // Specify your database name
+  return cachedDb;
+}
+
+// Nodemailer setup for your SMTP server (Example: Gmail SMTP)
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // Replace with your preferred service
+  service: 'gmail', // You can change this to another email service
   auth: {
-    user: process.env.EMAIL_USERNAME,
-    pass: process.env.EMAIL_PASSWORD,
+    user: process.env.EMAIL_USERNAME, // Your email address (e.g., 'your-email@gmail.com')
+    pass: process.env.EMAIL_PASSWORD, // Your email password or app-specific password
   },
 });
 
-async function connectDb() {
-  if (!db) {
-    await client.connect();
-    db = client.db('Conecteer'); // Replace with your database name
-  }
-  return db;
-}
-
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { email, name, message } = req.body;
+    const { email } = req.body; // Only handling email
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
 
     try {
-      // Connect to the database
+      console.log('Connecting to DB...');
       const database = await connectDb();
-      const usersCollection = database.collection('users'); // Replace with your collection name
+      console.log('DB connected');
 
-      // Check if the email already exists
+      const usersCollection = database.collection('users');
+      console.log('Checking for existing email...');
       const existingUser = await usersCollection.findOne({ email });
+
       if (existingUser) {
-        // Redirect to another page if the email exists
-        return res.redirect(302, '/error.html'); // Adjust with your redirect path
+        console.log('Email already exists, redirecting...');
+        return res.redirect(302, '/error.html');
       }
 
-      // Save the new email to the database
-      await usersCollection.insertOne({ email, name, message });
+      console.log('Inserting new email...');
+      await usersCollection.insertOne({ email });
 
-      // Send the email (using Nodemailer)
+      // Prepare the email content
       const mailOptions = {
-        from: process.env.EMAIL_USERNAME,
-        to: process.env.EMAIL_USERNAME,
-        subject: 'New User',
-        text: `${email}`,
+        from: process.env.EMAIL_USERNAME, // Sender email
+        to: process.env.EMAIL_USERNAME, // Recipient email
+        subject: 'Thank you for subscribing!',
+        text: `Hello,\n\nThank you for your subscription. We've added your email to our list.`,
       };
 
+      console.log('Sending email...');
       await transporter.sendMail(mailOptions);
 
-      // Redirect to the success page
-      return res.redirect(302, '/subscribed.html'); // Adjust with your redirect path
+      console.log('Redirecting to success page...');
+      return res.redirect(302, '/subscribed.html');
     } catch (error) {
-      console.error(error);
+      console.error('Error occurred:', error);
       return res.status(500).json({ error: 'Something went wrong' });
     }
   } else {
