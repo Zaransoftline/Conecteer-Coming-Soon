@@ -1,4 +1,4 @@
-import clientPromise from '../lib/mongodb';
+import clientPromise from '../../lib/mongodb';
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
@@ -9,19 +9,19 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function sendEmail() {
+async function sendEmail(email) {
   const mailOptions = {
     from: process.env.EMAIL_USERNAME,
     to: process.env.EMAIL_USERNAME,
     subject: 'Thank you for subscribing!',
-    text: `Hello,\n\nThank you for your subscription. We've added your email to our list.`,
+    text: `Hello,\n\nThank you for subscribing: ${email}`,
   };
 
   try {
     await transporter.sendMail(mailOptions);
     console.log('Email sent!');
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Failed to send email:', error.message);
   }
 }
 
@@ -39,24 +39,24 @@ export default async function handler(req, res) {
   try {
     const client = await clientPromise;
     const db = client.db('Conecteer');
-    const usersCollection = db.collection('users');
+    const users = db.collection('users');
 
-    const existingUser = await usersCollection.findOne({ email });
+    const existingUser = await users.findOne({ email });
 
     if (existingUser) {
       return res.redirect(302, '/error.html');
     }
 
-    await usersCollection.insertOne({ email });
+    await users.insertOne({ email });
 
-    // Send response quickly
+    // Send response fast
     res.redirect(302, '/subscribed.html');
 
-    // Send email in background
-    sendEmail();
+    // Async task (do NOT await it)
+    void sendEmail(email);
 
-  } catch (error) {
-    console.error('Server error:', error);
+  } catch (err) {
+    console.error('Server error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
