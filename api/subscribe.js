@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import nodemailer from "nodemailer";
 
-const client = new MongoClient(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(process.env.MONGODB_URI);
 let db;
 
 const transporter = nodemailer.createTransport({
