@@ -72,27 +72,28 @@
             });
     
             const text = await res.text();
-    
             let data;
+    
             try {
               data = JSON.parse(text);
             } catch {
-              // If response isn't valid JSON, treat it as error
-              return window.location.href = "/error.html";
+              console.error("Invalid JSON response");
+              return;
             }
     
-            // Redirect based on message or error
             if (data.message === "Subscribed!") {
               window.location.href = "/subscribed.html";
-            } else {
+            } else if (data.error === "You're already subscribed!") {
               window.location.href = "/error.html";
+            } else {
+              console.error("Unexpected response:", data);
             }
           } catch (err) {
-            console.error("Error:", err);
-            window.location.href = "/error.html";
+            console.error("Network or server error:", err);
           }
         });
     </script>
+    
     
   </body>
 </html>
