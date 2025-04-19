@@ -48,12 +48,8 @@ export default async function handler(req, res) {
     }
 
     await users.insertOne({ email });
-
-    // Send response fast
+    await sendEmail(email); // await BEFORE response
     res.redirect(302, '/subscribed.html');
-
-    // Async task (do NOT await it)
-    void sendEmail(email);
 
   } catch (err) {
     console.error('Server error:', err);
