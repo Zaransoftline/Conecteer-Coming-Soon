@@ -8,28 +8,29 @@ const EmailSchema = new mongoose.Schema({
 const Email = mongoose.models.Email || mongoose.model('Email', EmailSchema);
 
 export default async function handler(req, res) {
-  await dbConnect();
+  try {
+    await dbConnect();
 
-  if (req.method === 'POST') {
-    const { email } = req.body;
+    if (req.method === 'POST') {
+      const { email } = req.body;
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ error: 'Invalid email address.' });
-    }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ error: 'Invalid email address.' });
+      }
 
-    try {
       const existing = await Email.findOne({ address: email });
       if (existing) {
         return res.status(200).json({ error: "You're already subscribed!" });
       }
 
       await Email.create({ address: email });
-      res.status(200).json({ message: 'Subscribed!' });
-    } catch (err) {
-      console.error(err);  // Log the error for debugging
-      res.status(500).json({ error: 'Server error: ' + err.message });
+      return res.status(200).json({ message: 'Subscribed!' });
+    } else {
+      res.setHeader('Allow', ['POST']);
+      return res.status(405).json({ error: 'Method not allowed' });
     }
-  } else {
-    res.status(405).json({ error: 'Method not allowed' });
+  } catch (err) {
+    console.error("API Error:", err);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
