@@ -9,7 +9,9 @@ async function connectDb() {
     return cachedDb; // Reuse cached DB connection
   }
 
-  const client = new MongoClient(process.env.MONGODB_URI);
+  const client = new MongoClient(process.env.MONGODB_URI, {
+    useUnifiedTopology: true, // Ensure connection pooling
+  });
   const db = await client.connect();
   cachedDb = db.db('Conecteer'); // Specify your database name
   return cachedDb;
@@ -23,6 +25,24 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD, // Your email password or app-specific password
   },
 });
+
+async function sendEmail() {
+  // Prepare the email content
+  const mailOptions = {
+    from: process.env.EMAIL_USERNAME, // Sender email
+    to: process.env.EMAIL_USERNAME, // Recipient email
+    subject: 'Thank you for subscribing!',
+    text: `Hello,\n\nThank you for your subscription. We've added your email to our list.`,
+  };
+
+  try {
+    console.log('Sending email...');
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent!');
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -49,19 +69,13 @@ export default async function handler(req, res) {
       console.log('Inserting new email...');
       await usersCollection.insertOne({ email });
 
-      // Prepare the email content
-      const mailOptions = {
-        from: process.env.EMAIL_USERNAME, // Sender email
-        to: process.env.EMAIL_USERNAME, // Recipient email
-        subject: 'Thank you for subscribing!',
-        text: `Hello,\n\nThank you for your subscription. We've added your email to our list.`,
-      };
-
-      console.log('Sending email...');
-      await transporter.sendMail(mailOptions);
-
+      // Respond immediately after processing DB and before sending email
       console.log('Redirecting to success page...');
-      return res.redirect(302, '/subscribed.html');
+      res.redirect(302, '/subscribed.html');
+
+      // Send the email in the background asynchronously
+      sendEmail();
+
     } catch (error) {
       console.error('Error occurred:', error);
       return res.status(500).json({ error: 'Something went wrong' });
