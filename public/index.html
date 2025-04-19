@@ -43,7 +43,7 @@
         <h1>Coming Soon!</h1>
         <p>Something great is on the way!</p>
 
-        <form method="POST" id="subscribe-form">
+        <form action="/api/subscribe" method="POST" id="subscribe-form">
           <label>
             <span> Your email: </span>
             <input class="email-input" type="email" name="email" required />
@@ -56,38 +56,5 @@
 
     <script src="./scripts/script.js"></script>
     <script src="./scripts/theme.js"></script>
-
-    <script>
-      document
-        .getElementById("subscribe-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const email = e.target.email.value;
-
-          try {
-            const res = await fetch("/api/subscribe", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email }),
-            });
-
-            if (!res.ok) {
-              throw new Error(`HTTP error! status: ${res.status}`);
-            }
-
-            const data = await res.json();
-
-            if (data.message === "Subscribed!") {
-              window.location.href = "/subscribed.html";
-            } else if (data.error === "You're already subscribed!") {
-              window.location.href = "/error.html";
-            } else {
-              console.error("Unexpected response:", data);
-            }
-          } catch (err) {
-            console.error("Network or server error:", err);
-          }
-        });
-    </script>
   </body>
 </html>

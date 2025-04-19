@@ -1,36 +1,61 @@
-import dbConnect from '../lib/db';
-import mongoose from 'mongoose';
+import { MongoClient } from "mongodb";
+import nodemailer from "nodemailer";
 
-const EmailSchema = new mongoose.Schema({
-  address: { type: String, unique: true },
-  createdAt: { type: Date, default: Date.now },
+const client = new MongoClient(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+let db;
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Replace with your preferred service
+  auth: {
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_PASSWORD,
+  },
 });
-const Email = mongoose.models.Email || mongoose.model('Email', EmailSchema);
+
+async function connectDb() {
+  if (!db) {
+    await client.connect();
+    db = client.db('Conecteer'); // Replace with your database name
+  }
+  return db;
+}
 
 export default async function handler(req, res) {
-  try {
-    await dbConnect();
+  if (req.method === 'POST') {
+    const { email, name, message } = req.body;
 
-    if (req.method === 'POST') {
-      const { email } = req.body;
+    try {
+      // Connect to the database
+      const database = await connectDb();
+      const usersCollection = database.collection('users'); // Replace with your collection name
 
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return res.status(400).json({ error: 'Invalid email address.' });
+      // Check if the email already exists
+      const existingUser = await usersCollection.findOne({ email });
+      if (existingUser) {
+        // Redirect to another page if the email exists
+        return res.redirect(302, '/error.html'); // Adjust with your redirect path
       }
 
-      const existing = await Email.findOne({ address: email });
-      if (existing) {
-        return res.status(200).json({ error: "You're already subscribed!" });
-      }
+      // Save the new email to the database
+      await usersCollection.insertOne({ email, name, message });
 
-      await Email.create({ address: email });
-      return res.status(200).json({ message: 'Subscribed!' });
-    } else {
-      res.setHeader('Allow', ['POST']);
-      return res.status(405).json({ error: 'Method not allowed' });
+      // Send the email (using Nodemailer)
+      const mailOptions = {
+        from: process.env.EMAIL_USERNAME,
+        to: process.env.EMAIL_USERNAME,
+        subject: 'New User',
+        text: `${email}`,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      // Redirect to the success page
+      return res.redirect(302, '/subscribed.html'); // Adjust with your redirect path
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Something went wrong' });
     }
-  } catch (err) {
-    console.error("API Error:", err);
-    return res.status(500).json({ error: 'Internal Server Error' });
+  } else {
+    res.status(405).json({ error: 'Method Not Allowed' });
   }
 }
