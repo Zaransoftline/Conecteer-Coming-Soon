@@ -1,29 +1,4 @@
 import clientPromise from '../lib/mongodb';
-import nodemailer from 'nodemailer';
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USERNAME,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
-
-async function sendEmail(email) {
-  const mailOptions = {
-    from: process.env.EMAIL_USERNAME,
-    to: process.env.EMAIL_USERNAME,
-    subject: 'Thank you for subscribing!',
-    text: `Hello,\n\nThank you for subscribing: ${email}`,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log('Email sent!');
-  } catch (error) {
-    console.error('Failed to send email:', error.message);
-  }
-}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -32,8 +7,8 @@ export default async function handler(req, res) {
 
   const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' });
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Invalid email address' });
   }
 
   try {
@@ -48,9 +23,8 @@ export default async function handler(req, res) {
     }
 
     await users.insertOne({ email });
-    await sendEmail(email); // await BEFORE response
-    res.redirect(302, '/subscribed.html');
 
+    return res.redirect(302, '/subscribed.html');
   } catch (err) {
     console.error('Server error:', err);
     return res.status(500).json({ error: 'Internal server error' });
