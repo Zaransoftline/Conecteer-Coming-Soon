@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -43,7 +43,7 @@
         <h1>Coming Soon!</h1>
         <p>Something great is on the way!</p>
 
-        <form action="/api/subscribe" method="POST" id="subscribe-form">
+        <form method="POST" id="subscribe-form">
           <label>
             <span> Your email: </span>
             <input class="email-input" type="email" name="email" required />
@@ -56,5 +56,42 @@
 
     <script src="./scripts/script.js"></script>
     <script src="./scripts/theme.js"></script>
+    <script>
+      const form = document.getElementById("subscribe-form");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const email = formData.get("email");
+
+        try {
+          const response = await fetch(
+            "/api/subscribe",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email }),
+            }
+          );
+
+          const result = await response.json().catch(() => ({})); // avoid crash on bad JSON
+
+          console.log("Server response:", result);
+
+          if (response.ok) {
+            alert("Thanks! Your email was submitted.");
+            form.reset();
+          } else {
+            alert("Oops! Something went wrong.");
+          }
+        } catch (error) {
+          alert("Error connecting to server.");
+          console.error(error);
+        }
+      });
+    </script>
   </body>
 </html>
