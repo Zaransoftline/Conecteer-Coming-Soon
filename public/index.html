@@ -6,7 +6,7 @@
     <title>Conecteer - Coming Soon!</title>
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
 
-    <link rel="stylesheet" href="./style.css" type="text/css" />
+    <link rel="stylesheet" href="../style.css" type="text/css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -46,7 +46,7 @@
         <form method="POST" id="subscribe-form">
           <label>
             <span> Your email: </span>
-            <input class="email-input" type="email" name="email" required />
+            <input id="email" class="email-input" type="email" name="email" required />
           </label>
           <!-- your other form fields go here -->
           <button type="submit" class="submit-btn">Notify Me!</button>
@@ -57,39 +57,21 @@
     <script src="./scripts/script.js"></script>
     <script src="./scripts/theme.js"></script>
     <script>
-      const form = document.getElementById("subscribe-form");
-
-      form.addEventListener("submit", async (e) => {
+      document.getElementById('subscribe-form').addEventListener('submit', async function (e) {
         e.preventDefault();
-
-        const formData = new FormData(form);
-        const email = formData.get("email");
-
+        const email = document.getElementById('email').value;
+    
         try {
-          const response = await fetch(
-            "/api/subscribe",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ email }),
-            }
-          );
-
-          const result = await response.json().catch(() => ({})); // avoid crash on bad JSON
-
-          console.log("Server response:", result);
-
-          if (response.ok) {
-            alert("Thanks! Your email was submitted.");
-            form.reset();
-          } else {
-            alert("Oops! Something went wrong.");
-          }
-        } catch (error) {
-          alert("Error connecting to server.");
-          console.error(error);
+          const res = await fetch('/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+    
+          const data = await res.json();
+          alert(data.message);
+        } catch (err) {
+          alert('Something went wrong');
         }
       });
     </script>
