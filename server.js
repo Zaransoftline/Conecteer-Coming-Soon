@@ -8,6 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 // MongoDB schema
 const userSchema = new mongoose.Schema({
@@ -30,16 +31,15 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => console.error('MongoDB error:', err));
 
 // POST endpoint to save email and notify
+// POST endpoint
 app.post('/subscribe', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: 'Email is required' });
 
   try {
-    // Save to database
     const newUser = new User({ email });
     await newUser.save();
 
-    // Send notification email to you
     await transporter.sendMail({
       from: `"Notifier" <${process.env.EMAIL_USERNAME}>`,
       to: process.env.EMAIL_USERNAME,
@@ -47,19 +47,29 @@ app.post('/subscribe', async (req, res) => {
       text: `A new user has subscribed with email: ${email}`,
     });
 
-    res.status(201).json({ message: 'User subscribed and email sent!' });
+    return res.status(201).json({ redirect: "/subscribed" });
   } catch (error) {
-    console.error(error);
     if (error.code === 11000) {
-      res.status(400).json({ message: 'Email already exists' });
-    } else {
-      res.status(500).json({ message: 'Something went wrong' });
+      return res.status(400).json({ redirect: "/error", message: "Email already subscribed" });
     }
+
+    console.error("Error processing subscription:", error);
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
+
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/subscribed", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "subscribed.html"));
+});
+
+app.get("/error", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "error.html"));
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
