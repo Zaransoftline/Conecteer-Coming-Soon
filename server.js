@@ -146,6 +146,7 @@ app.post("/login", async (req, res) => {
     return res.status(500).json({ error: "Internal server error." });
   }
 });
+
 app.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
@@ -180,7 +181,7 @@ app.get("/verify-email", async (req, res) => {
     await newUser.save();
     pendingVerifications.delete(token);
 
-    res.sendFile(path.join(__dirname, "public", "verified.html"));
+    res.redirect('/verified.html');
   } catch (error) {
     console.error("Error verifying user:", error);
     res.status(500).send("Failed to verify email.");
@@ -234,7 +235,7 @@ app.post("/resend-verification", async (req, res) => {
       lastResendAt: Date.now(), // Update to now after this resend
     });
 
-    const verificationLink = `http://localhost:3000/verify-email?token=${newToken}`;
+    const verificationLink = `https://conecteer.com/verify-email?token=${newToken}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
