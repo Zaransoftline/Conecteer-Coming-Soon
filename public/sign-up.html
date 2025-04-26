@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conecteer - Sign up!</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+    <link rel="stylesheet" href="../style.css" type="text/css" />
+    <link rel="stylesheet" href="../nav.css" type="text/css" />
+    <link rel="stylesheet" href="../footer.css" type="text/css" />
+    <link rel="stylesheet" href="../loader.css" type="text/css" />
+    <link rel="stylesheet" href="../signup.css" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <aside class="loader" id="loader">
+      <div class="animation">
+        <div class="circle blue"></div>
+        <div class="circle purple"></div>
+        <div class="circle black"></div>
+        <div class="circle light-blue"></div>
+      </div>
+    </aside>
+
+    <header class="header">
+      <div class="header-content">
+        <a class="logo" href="#">
+          <img class="logo-img" src="./images/logo.svg" alt="Logo" />
+        </a>
+
+        <div class="mode">
+          <input type="checkbox" class="mode-input" />
+          <img class="moon" src="./images/moon.svg" alt="Moon Icon" />
+          <img class="sun" src="./images/sun.svg" alt="Sun Icon" />
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="signup">
+        <div class="signup-content">
+          <form class="form" action="/signup" method="POST">
+            <h1>Sign Up</h1>
+            <div class="inputs">
+              <label>
+                <span>First Name:</span>
+                <input
+                  class="input first-name"
+                  id="first-name"
+                  name="firstName"
+                />
+              </label>
+              <label>
+                <span>Last Name:</span>
+                <input class="input last-name" id="last-name" name="lastName" />
+              </label>
+              <label>
+                <span>Email:</span>
+                <input
+                  type="email"
+                  class="input email"
+                  id="email"
+                  name="email"
+                />
+              </label>
+              <label>
+                <span>Password:</span>
+                <input
+                  type="password"
+                  class="input password"
+                  id="password"
+                  name="password"
+                />
+              </label>
+            </div>
+            <div class="form-buttons">
+              <a class="form-btn cancel-btn" href="/">Cancel</a>
+              <button type="submit" class="form-btn submit-btn">
+                Continue
+              </button>
+            </div>
+          </form>
+
+          <div class="login">
+            <span>Already have an account?</span>
+            <a class="login-link" href="./log-in.html">Log In</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>&copy; 2025 Conecteer. All rights reserved.</span>
+    </footer>
+
+    <script src="./scripts/theme.js"></script>
+    <script src="./scripts/script.js"></script>
+    <script>
+      const form = document.querySelector("form");
+
+      form.addEventListener("submit", () => {
+        const email = document.getElementById("email").value;
+        localStorage.setItem("signupEmail", email);
+      });
+    </script>
+  </body>
+</html>

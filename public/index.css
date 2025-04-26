@@ -1,0 +1,29 @@
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-block: calc((100vh - 310px) / 2);
+    padding-inline: 4vw;
+    flex: 1;
+  }
+  
+  .hero h1 {
+    font-size: 65px;
+    background: -webkit-linear-gradient(360deg,#3172ff, #7c3aed) ;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: "Montserrat", sans-serif;
+    margin: 20px;
+    text-align: center;
+  }
+  
+  .hero p {
+    margin: 0;
+    font-size: 22px;
+    font-family: "Montserrat", sans-serif;
+    color: var(--text-color);
+    text-align: center;
+    transition: 0.3s;
+  }

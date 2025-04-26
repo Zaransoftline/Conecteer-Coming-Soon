@@ -1,0 +1,27 @@
+:root {
+  --blue: #3172ff;
+  --purple: #7c3aed;
+  --text-color: #1f2937;
+  --black: #1f2937;
+  --light-blue: #e0f2fe;
+  --bg-color: #fafafa;
+  --white: #fafafa;
+  --button-bg: linear-gradient(50deg, #3c77ff, #7c3aed, #663cff);
+}
+
+[data-theme="dark"] {
+  --bg-color: #171717;
+  --text-color: #ffffff;
+  --accent-color: #1e90ff;
+}
+
+footer {
+  height: 80px;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-color);
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

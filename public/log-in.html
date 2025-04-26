@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conecteer - Log in!</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+    <link rel="stylesheet" href="./style.css" type="text/css" />
+    <link rel="stylesheet" href="./nav.css" type="text/css" />
+    <link rel="stylesheet" href="./footer.css" type="text/css" />
+    <link rel="stylesheet" href="./loader.css" type="text/css" />
+    <link rel="stylesheet" href="./signup.css" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <aside class="loader" id="loader">
+      <div class="animation">
+        <div class="circle blue"></div>
+        <div class="circle purple"></div>
+        <div class="circle black"></div>
+        <div class="circle light-blue"></div>
+      </div>
+    </aside>
+
+    <header class="header">
+      <div class="header-content">
+        <a class="logo" href="#">
+          <img class="logo-img" src="./images/logo.svg" alt="Logo" />
+        </a>
+
+        <div class="mode">
+          <input type="checkbox" class="mode-input" />
+          <img class="moon" src="./images/moon.svg" alt="Moon Icon" />
+          <img class="sun" src="./images/sun.svg" alt="Sun Icon" />
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="signup">
+        <div class="signup-content">
+          <form class="form" id="form" method="POST">
+            <h1>Welcome Back</h1>
+            <div class="inputs">
+              <label>
+                <span>Email:</span>
+                <input type="email" class="input email" id="email" name="email" />
+              </label>
+              <label>
+                <span>Password:</span>
+                <input
+                  type="password"
+                  class="input password"
+                  id="password"
+                  name="password"
+                />
+              </label>
+            </div>
+            <div class="form-buttons">
+              <a class="form-btn cancel-btn" href="/">Cancel</a>
+              <button type="submit" class="form-btn submit-btn">Continue</button>
+            </div>
+          </form>
+  
+          <div class="login">
+            <span>Don't have an account?</span>
+            <a class="login-link" href="./sign-up.html">Sign up</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./scripts/theme.js"></script>
+    <script src="./scripts/script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const loginForm = document.getElementById("form");
+
+        loginForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const emailInput = document.getElementById("email");
+          const passwordInput = document.getElementById("password");
+          const email = emailInput.value;
+          const password = passwordInput.value;
+
+          try {
+            const response = await fetch("/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              // In a real app, you'd redirect the user or update the UI
+              console.log("Login successful:", data);
+            } else {
+              console.error("Login failed:", data);
+            }
+          } catch (error) {
+            console.error("Error during login request:", error);
+          } finally {
+            loginForm.reset(); // Clear the form after submission (regardless of success/failure)
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
