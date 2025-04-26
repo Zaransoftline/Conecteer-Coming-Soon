@@ -6,7 +6,7 @@ const path = require("path");
 const { signInWithEmailAndPassword } = require("firebase/auth");
 const app = express();
 const PORT = process.env.PORT || 3000;
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
 app.use(express.urlencoded({ extended: true }));
