@@ -181,7 +181,7 @@ app.get("/verify-email", async (req, res) => {
     await newUser.save();
     pendingVerifications.delete(token);
 
-    res.sendFile(path.join(__dirname, "public", "verified.html"));
+    res.redirect('/verified.html');
   } catch (error) {
     console.error("Error verifying user:", error);
     res.status(500).send("Failed to verify email.");
