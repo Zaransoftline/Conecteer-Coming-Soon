@@ -99,7 +99,7 @@ app.post("/signup", async (req, res) => {
     const verificationLink = `https://conecteer.com/verify-email?token=${token}`;
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USERNAME,
+      from: process.env.EMAIL_USER,
       to: email,
       subject: "Verify your email",
       html: `<p>Please confirm your email by clicking the link below:</p><a href="${verificationLink}">${verificationLink}</a>`,
@@ -237,7 +237,7 @@ app.post("/resend-verification", async (req, res) => {
     const verificationLink = `http://localhost:3000/verify-email?token=${newToken}`;
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USERNAME,
+      from: process.env.EMAIL_USER,
       to: email,
       subject: "Verify your email - Resend",
       html: `<p>Please confirm your email by clicking the link below:</p><a href="${verificationLink}">${verificationLink}</a>`,
