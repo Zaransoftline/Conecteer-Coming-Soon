@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 const path = require("path");
-const { signInWithEmailAndPassword } = require("firebase/auth");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const bcrypt = require('bcryptjs');
