@@ -141,6 +141,8 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.use(express.static(path.join(__dirname, "public")));
+
 app.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
@@ -246,8 +248,6 @@ app.post("/resend-verification", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
-
-app.use(express.static(path.join(__dirname, "public")));
 
 app.get("*", (req, res, next) => {
   if (req.path.startsWith("/verify-email")) {
