@@ -64,10 +64,6 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB error:", err));
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
 const { v4: uuidv4 } = require("uuid");
 const pendingVerifications = new Map();
 
