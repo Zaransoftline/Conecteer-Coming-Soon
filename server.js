@@ -249,7 +249,7 @@ app.post("/resend-verification", async (req, res) => {
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/*", (req, res, next) => {
+app.get("*", (req, res, next) => {
   if (req.path.startsWith("/verify-email")) {
     return next();
   }
