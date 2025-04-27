@@ -11,7 +11,6 @@ const saltRounds = 10;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
 
 //Firebase
 const admin = require("firebase-admin");
@@ -252,6 +251,8 @@ app.post("/resend-verification", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
+
+app.use(express.static(path.join(__dirname, "public")));
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
