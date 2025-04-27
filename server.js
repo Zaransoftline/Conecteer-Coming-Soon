@@ -10,6 +10,7 @@ const saltRounds = 10;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public"))); // serves verify.html, log-in.html, etc.
 
 //Firebase
 const admin = require("firebase-admin");
@@ -175,12 +176,14 @@ app.get("/verify-email", async (req, res) => {
     await newUser.save();
     pendingVerifications.delete(token);
 
-    res.send("<h1>Email verified! You can now log in.</h1>");
+    // ✅ REDIRECT to verified.html instead of sending HTML
+    res.redirect("/verified.html");
   } catch (error) {
     console.error("Error verifying user:", error);
     res.status(500).send("Failed to verify email.");
   }
 });
+
 
 app.post("/check-verification", async (req, res) => {
   const { email } = req.body;
@@ -247,7 +250,6 @@ app.post("/resend-verification", async (req, res) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, "public"))); // serves verify.html, log-in.html, etc.
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html")); // for React/SPA routing fallback
