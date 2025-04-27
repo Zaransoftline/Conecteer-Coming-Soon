@@ -141,7 +141,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/verify-email", async (req, res) => {
   const { token } = req.query;
@@ -249,11 +249,11 @@ app.post("/resend-verification", async (req, res) => {
   }
 });
 
-app.get("*", (req, res, next) => {
-  if (req.path.startsWith("/verify-email")) {
-    return next();
-  }
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+// app.get("*", (req, res, next) => {
+//   if (req.path.startsWith("/verify-email")) {
+//     return next();
+//   }
+//   res.sendFile(path.join(__dirname, "public", "index.html"));
+// });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
