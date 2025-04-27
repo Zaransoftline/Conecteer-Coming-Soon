@@ -146,15 +146,15 @@ app.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
   if (!token || !pendingVerifications.has(token)) {
-    return res.status(400).send("Invalid or expired token.");
+    return res.status(400).json({ success: false, error: "Invalid or expired token." });
   }
 
   const userData = pendingVerifications.get(token);
 
-  const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+  const oneHour = 60 * 60 * 1000; // 1 hour
   if (Date.now() - userData.createdAt > oneHour) {
     pendingVerifications.delete(token);
-    return res.status(400).send("Verification link has expired.");
+    return res.status(400).json({ success: false, error: "Verification link has expired." });
   }
 
   const { uid, firstName, lastName, password } = userData;
@@ -176,13 +176,14 @@ app.get("/verify-email", async (req, res) => {
     await newUser.save();
     pendingVerifications.delete(token);
 
-    // ✅ REDIRECT to verified.html instead of sending HTML
-    res.redirect("/verified.html");
+    // ✅ Send JSON response, not redirect
+    res.json({ success: true });
   } catch (error) {
     console.error("Error verifying user:", error);
-    res.status(500).send("Failed to verify email.");
+    res.status(500).json({ success: false, error: "Failed to verify email." });
   }
 });
+
 
 
 app.post("/check-verification", async (req, res) => {
