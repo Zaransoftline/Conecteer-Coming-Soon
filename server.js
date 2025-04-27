@@ -90,7 +90,7 @@ app.post("/signup", async (req, res) => {
       lastResendAt: Date.now(), // Initialize resend cooldown immediately
     });
 
-    const verificationLink = `https://conecteer.com/verify-email?token=${token}`;
+    const verificationLink = `https://conecteer.com/verify.html?token=${token}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -229,7 +229,7 @@ app.post("/resend-verification", async (req, res) => {
       lastResendAt: Date.now(), // Update to now after this resend
     });
 
-    const verificationLink = `https://conecteer.com/verify-email?token=${newToken}`;
+    const verificationLink = `https://conecteer.com/verify.html?token=${newToken}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -247,14 +247,11 @@ app.post("/resend-verification", async (req, res) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"))); // serves verify.html, log-in.html, etc.
 
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html")); // for React/SPA routing fallback
+});
 
-// app.get("*", (req, res, next) => {
-//   if (req.path.startsWith("/verify-email")) {
-//     return next();
-//   }
-//   res.sendFile(path.join(__dirname, "public", "index.html"));
-// });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
