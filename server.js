@@ -251,6 +251,18 @@ app.post("/resend-verification", async (req, res) => {
   }
 });
 
+app.get("/verify.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "verify.html"));
+});
+
+app.get("/log-in.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "log-in.html"));
+});
+
+app.get("/verified.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "verified.html"));
+});
+
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html")); // for React/SPA routing fallback
