@@ -181,7 +181,7 @@ app.get("/verify-email", async (req, res) => {
     await newUser.save();
     pendingVerifications.delete(token);
 
-    res.redirect('https://conecteer.com/verified.html');
+    res.send("<h1>Email verified! You can now log in.</h1>");
   } catch (error) {
     console.error("Error verifying user:", error);
     res.status(500).send("Failed to verify email.");
