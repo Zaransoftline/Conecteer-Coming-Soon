@@ -51,36 +51,30 @@
     <script src="./scripts/theme.js"></script>
 
     <script>
+      // Get the token from the URL
       const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get("token");
+      const token = urlParams.get('token');
 
-      async function verifyEmail() {
-        if (!token) return;
-
-        try {
-          const response = await fetch(`/verify-email?token=${token}`, {
-            headers: { "Accept": "application/json" }
-          });
-          const result = await response.json();
-
-          if (result.success) {
-            document.getElementById("verificationSection").innerHTML = `
-              <h2>✅ Your email has been verified!</h2>
-              <a href="/log-in.html" class="btn">Go to Login</a>
-            `;
-          } else {
-            throw new Error("Verification failed.");
-          }
-        } catch (error) {
-          document.getElementById("verificationSection").innerHTML = `
-            <h2>❌ Verification failed</h2>
-            <p>Please try again or contact support.</p>
-          `;
-        }
+      if (token) {
+          // Make a request to verify the email
+          fetch(`/verify-email?token=${token}`)
+              .then(response => response.json())
+              .then(data => {
+                  const messageDiv = document.getElementById('message');
+                  if (data.success) {
+                      messageDiv.innerHTML = `<p>${data.message}</p>`;
+                  } else {
+                      messageDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+                  }
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  document.getElementById('message').innerHTML = `<p>An error occurred. Please try again later.</p>`;
+              });
+      } else {
+          document.getElementById('message').innerHTML = `<p>No token provided.</p>`;
       }
-
-      verifyEmail();
-    </script>
+  </script>
 
     <script>
       document.getElementById("checkVerification").addEventListener("click", async () => {

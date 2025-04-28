@@ -160,11 +160,11 @@ app.get("/verify-email", async (req, res) => {
   const { uid, firstName, lastName, password } = userData;
 
   try {
-    const userRecord = await admin.auth().getUser(uid);
+    const userRecord = await admin.auth().getUser (uid);
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const newUser = new User({
+    const newUser  = new User({
       email: userRecord.email,
       uid: userRecord.uid,
       firstName,
@@ -173,11 +173,11 @@ app.get("/verify-email", async (req, res) => {
       emailVerified: true,
     });
 
-    await newUser.save();
+    await newUser .save();
     pendingVerifications.delete(token);
 
-    // ✅ Send JSON response, not redirect
-    res.json({ success: true });
+    // Instead of redirecting, send a success response
+    res.json({ success: true, message: "Email verified successfully!" });
   } catch (error) {
     console.error("Error verifying user:", error);
     res.status(500).json({ success: false, error: "Failed to verify email." });
@@ -265,7 +265,7 @@ app.get("/verified.html", (req, res) => {
 
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html")); // for React/SPA routing fallback
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 
