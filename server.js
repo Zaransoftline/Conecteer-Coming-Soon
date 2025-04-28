@@ -251,7 +251,7 @@ app.post("/resend-verification", async (req, res) => {
   }
 });
 
-app.get("/verify.html", (req, res) => {
+app.get("/verify", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "verify.html"));
 });
 
