@@ -177,7 +177,7 @@ app.get("/verify-email", async (req, res) => {
     pendingVerifications.delete(token);
 
     // Instead of redirecting, send a success response
-    res.sendFile(path.join(__dirname, "public", "verified.html"));
+    res.json({ success: true, message: "Email verified successfully!" });
   } catch (error) {
     console.error("Error verifying user:", error);
     res.status(500).json({ success: false, error: "Failed to verify email." });

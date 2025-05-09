@@ -62,7 +62,7 @@
               .then(data => {
                   const messageDiv = document.getElementById('message');
                   if (data.success) {
-                      messageDiv.innerHTML = `<p>${data.message}</p>`;
+                      window.location.href = '/verified.html';
                   } else {
                       messageDiv.innerHTML = `<p>Error: ${data.error}</p>`;
                   }
