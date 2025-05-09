@@ -151,11 +151,11 @@ app.get("/verify-email", async (req, res) => {
 
   const userData = pendingVerifications.get(token);
 
-  // const oneHour = 60 * 60 * 1000; // 1 hour
-  // if (Date.now() - userData.createdAt > oneHour) {
-  //   pendingVerifications.delete(token);
-  //   return res.status(400).json({ success: false, error: "Verification link has expired." });
-  // }
+  const oneHour = 60 * 60 * 1000; // 1 hour
+  if (Date.now() - userData.createdAt > oneHour) {
+    pendingVerifications.delete(token);
+    return res.status(400).json({ success: false, error: "Verification link has expired." });
+  }
 
   const { uid, firstName, lastName, password } = userData;
 
