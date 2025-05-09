@@ -91,7 +91,7 @@ app.post("/signup", async (req, res) => {
       lastResendAt: Date.now(), // Initialize resend cooldown immediately
     });
 
-    const verificationLink = `https://conecteer.com/verify.html?token=${token}`;
+    const verificationLink = `https://www.conecteer.com/verify.html?token=${token}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
